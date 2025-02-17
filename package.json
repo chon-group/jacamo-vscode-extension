@@ -2,7 +2,7 @@
   "name": "jacamo-vscode-extension",
   "displayName": "jacamo-vscode-extension",
   "description": "",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -39,7 +39,7 @@
       "activitybar": [
         {
           "id": "jacamoExplorer",
-          "title": "JaCaMo",
+          "title": "JM Code Assistant",
           "icon": "resources/jacamo-icon.png"
         }
       ]
@@ -48,7 +48,7 @@
       "jacamoExplorer": [
         {
           "id": "jacamoView",
-          "name": "JaCaMo Actions"
+          "name": "JM Code Assistant Actions"
         }
       ]
     },
