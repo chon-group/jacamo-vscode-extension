@@ -31,13 +31,13 @@ Before using this extension, ensure you have:
 ---
 
 ## **📂 Usage**
-### **1 Create a JaCaMo Application**
+### **1 - Create a JaCaMo Application**
 1. Click on the **JaCaMo Sidebar** icon in VSCode.
 2. Click **"Create JaCaMo App"**.
 3. Enter the project name.
 4. The application is created in the **current workspace**.
 
-### **2 Run a JaCaMo Application**
+### **2 - Run a JaCaMo Application**
 1. Click on the **JaCaMo Sidebar** icon.
 2. Click **"Run JaCaMo App"**.
 3. Enter the application name (must match the `.jcm` file).
