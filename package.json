@@ -1,0 +1,49 @@
+{
+  "name": "jacamo-vscode-extension",
+  "displayName": "jacamo-vscode-extension",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "JaCaMo VSCode Extension",
+      "properties": {
+        "jacamo-vscode-extension.jacamoPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the JaCaMo executable (e.g., C:\\Users\\YourUser\\jacamo\\jacamo.exe)."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "jacamo-vscode-extension.createApp",
+        "title": "Create JaCaMo Application"
+      },
+      {
+        "command": "jacamo-vscode-extension.runApp",
+        "title": "Run JaCaMo Application"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "eslint": "^9.16.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
