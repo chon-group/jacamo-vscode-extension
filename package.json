@@ -51,7 +51,56 @@
           "name": "JaCaMo Actions"
         }
       ]
-    }
+    },
+    "grammars": [
+      {
+        "language": "jason",
+        "scopeName": "source.jason",
+        "path": "./syntaxes/jason.tmLanguage.json"
+      },
+      {
+        "language": "jcm",
+        "scopeName": "source.jcm",
+        "path": "./syntaxes/jcm.tmLanguage.json"
+      },
+      {
+        "language": "mas2j",
+        "scopeName": "source.mas2j",
+        "path": "./syntaxes/mas2j.tmLanguage.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "jason",
+        "extensions": [
+          ".asl"
+        ],
+        "aliases": [
+          "Jason"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "jcm",
+        "extensions": [
+          ".jcm"
+        ],
+        "aliases": [
+          "JaCaMo"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "mas2j",
+        "extensions": [
+          ".mas2j"
+        ],
+        "aliases": [
+          "MAS2J"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",

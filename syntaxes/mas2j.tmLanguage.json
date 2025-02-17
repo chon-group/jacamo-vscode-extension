@@ -1,0 +1,82 @@
+{
+   "scopeName": "source.mas2j",
+   "name": "Jason Project File",
+   "patterns": [
+      { "include": "#comments" },
+      { "include": "#keywords" },
+      { "include": "#operators" },
+      { "include": "#strings" },
+      { "include": "#supports" },
+      { "include": "#variables" },
+      { "include": "source.jason#constants" }
+   ],
+   "repository": {
+      "comments": {
+         "patterns": [
+            {
+               "begin": "//",
+               "end": "$",
+               "name": "comment.line.double-slash.mas2j"
+            },
+            {
+               "begin": "/\\*",
+               "end": "\\*/",
+               "name": "comment.block.mas2j"
+            }
+         ]
+      },
+      "keywords": {
+         "patterns": [
+            {
+               "match":
+                  "\\b(MAS|infrastructure|agents|environment|executionControl|classpath|aslSourcePath)\\b",
+               "name": "keyword.control.mas2j"
+            },
+            {
+               "match":
+                  "\\b(discard|verbose|at|agentClass|agentArchClass|beliefBaseClass|goals|beliefs)\\b",
+               "name": "keyword.control.mas2j"
+            },
+            {
+               "match":
+                  "\\b(Centralised)\\b",
+               "name": "keyword.control.mas2j"
+            }
+         ]
+      },
+      "operators":{
+         "patterns":[
+            {
+               "match": "(#)",
+               "name": "keyword.control.flow.mas2j"
+            }
+         ]
+      },
+      "strings": {
+         "patterns": [
+            {
+               "begin": "\"",
+               "end": "\"",
+               "name": "string.quoted.double.mas2j"
+            }
+         ]
+      },
+      "supports": {
+         "patterns": [
+            {
+               "match": "(?:^|\\s)[@]\\w+\\b",
+               "name": "constant.numeric.mas2j"
+            },
+            {
+               "match": "\\b[a-z]\\w*(\\.\\w+)*\\b",
+               "name": "support.function.mas2j"
+            },
+            {
+               "match": "\\b[a-z]\\w*\\b",
+               "name": "support.type.mas2j"
+            }
+         ]
+      }
+      
+   }
+}
