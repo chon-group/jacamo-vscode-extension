@@ -137,9 +137,48 @@ function activate(context) {
   );
 
   context.subscriptions.push(createAppCommand, runAppCommand);
+
+  const jacamoViewProvider = new JacamoViewProvider();
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider("jacamoView", jacamoViewProvider)
+  );
+
+  
 }
 
 function deactivate() {}
+
+class JacamoViewProvider {
+  constructor() {
+    this._onDidChangeTreeData = new vscode.EventEmitter();
+    this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+  }
+
+  getTreeItem(element) {
+    return element;
+  }
+
+  getChildren() {
+    return [
+      new JacamoTreeItem("Create JaCaMo App", "jacamo-vscode-extension.createApp"),
+      new JacamoTreeItem("Run JaCaMo App", "jacamo-vscode-extension.runApp"),
+    ];
+  }
+}
+
+/**
+ * Custom Tree Item with Command Binding
+ */
+class JacamoTreeItem extends vscode.TreeItem {
+  constructor(label, command) {
+    super(label, vscode.TreeItemCollapsibleState.None);
+    this.command = {
+      command: command,
+      title: label,
+    };
+  }
+}
+
 
 module.exports = {
   activate,

@@ -9,7 +9,10 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:jacamo-vscode-extension.createApp",
+    "onCommand:jacamo-vscode-extension.runApp"
+  ],
   "main": "./extension.js",
   "contributes": {
     "configuration": {
@@ -31,7 +34,24 @@
         "command": "jacamo-vscode-extension.runApp",
         "title": "Run JaCaMo Application"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "jacamoExplorer",
+          "title": "JaCaMo",
+          "icon": "resources/jacamo-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "jacamoExplorer": [
+        {
+          "id": "jacamoView",
+          "name": "JaCaMo Actions"
+        }
+      ]
+    }
   },
   "scripts": {
     "lint": "eslint .",
