@@ -4,7 +4,7 @@
   "publisher": "MustafaNeto",
   "icon": "resources/jacamo-icon.png",
   "description": "An extension for JaCaMo development in VSCode.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -16,6 +16,11 @@
     "onCommand:jacamo-vscode-extension.runApp"
   ],
   "main": "./extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mustafaneto/jacamo-vscode-extension"
+  },
+  "license": "MIT",
   "contributes": {
     "configuration": {
       "title": "JaCaMo VSCode Extension",
