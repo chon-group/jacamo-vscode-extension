@@ -21,7 +21,9 @@ A **Visual Studio Code extension** to facilitate **JaCaMo** development, allowin
 
 ## **📌 Requirements**
 Before using this extension, ensure you have:  
-1. **JaCaMo installed** – Download from [JaCaMo for Windows](https://github.com/chon-group/win-jacamo).  
+1. **Command Line Interface (CLI) for JaCaMo** – Install the appropriate version for your operating system:
+   - **Windows**: Download and install from [JaCaMo for Windows](https://github.com/chon-group/win-jacamo)
+   - **Linux**: Install using the package from [JaCaMo for Linux](https://github.com/chon-group/dpkg-jacamo)
 2. **Set the JaCaMo Path** – Configure the `jacamoPath` setting in VSCode:
     - Open **VSCode Settings** (`Ctrl + ,` or `Cmd + ,`).
     - Search for `"JaCaMo Path"`.
