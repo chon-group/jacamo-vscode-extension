@@ -7,27 +7,44 @@ const fs = require("fs");
 const EXTENSION_ID = 'jacamo-vscode-extension';
 const COMMANDS = {
     CREATE_APP: `${EXTENSION_ID}.createApp`,
-    RUN_APP: `${EXTENSION_ID}.runApp`
+    RUN_APP: `${EXTENSION_ID}.runApp`,
+    ORG_DIM_VIEW: `${EXTENSION_ID}.orgDimView`,
+    AGENT_DIM_VIEW: `${EXTENSION_ID}.agentDimView`,
+    ENV_DIM_VIEW: `${EXTENSION_ID}.envDimView`,
+    STOP_MAS: `${EXTENSION_ID}.stopMas`
 };
 const OUTPUT_CHANNEL_NAME = 'JaCaMo Output';
 
 // Configuration
 class Configuration {
     static get jacamoPath() {
-        return vscode.workspace.getConfiguration(EXTENSION_ID).get('jacamoPath');
+        // Use the setting if set, otherwise fallback to 'jacamo' (system PATH)
+        const configured = vscode.workspace.getConfiguration(EXTENSION_ID).get('jacamoPath');
+        return configured && configured.trim() !== '' ? configured : 'jacamo';
     }
 
     static async validateJacamoPath() {
-        if (!this.jacamoPath) {
-            await vscode.window.showErrorMessage(
-                'JaCaMo path is not configured. Please set it in VSCode settings.',
-                'Open Settings'
-            ).then(selection => {
-                if (selection === 'Open Settings') {
-                    vscode.commands.executeCommand('workbench.action.openSettings', `${EXTENSION_ID}.jacamoPath`);
-                }
+        // Only show error if neither the setting nor the fallback is available
+        if (this.jacamoPath === 'jacamo') {
+            // Try to check if 'jacamo' is available in PATH
+            return new Promise((resolve) => {
+                const { exec } = require('child_process');
+                exec('jacamo --version', (error) => {
+                    if (error) {
+                        vscode.window.showErrorMessage(
+                            'JaCaMo path is not configured and the jacamo command is not available in your PATH. Please set it in VSCode settings.',
+                            'Open Settings'
+                        ).then(selection => {
+                            if (selection === 'Open Settings') {
+                                vscode.commands.executeCommand('workbench.action.openSettings', `${EXTENSION_ID}.jacamoPath`);
+                            }
+                        });
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
             });
-            return false;
         }
         return true;
     }
@@ -104,7 +121,8 @@ class ProcessManager {
     }
 
     static spawnProcess(command, args, options = {}) {
-        const process = spawn(command, args, options);
+        // Ensure shell: true so PATH is resolved like in terminal
+        const process = spawn(command, args, { ...options, shell: true });
         
         process.stdout.on('data', (data) => {
             OutputManager.formatOutput(data);
@@ -147,56 +165,68 @@ class JaCaMoAppManager {
         }
     }
 
-    static async runApp(appName) {
-        if (!appName) {
-            throw new Error('Application name is required.');
-        }
-
+    static async runApp() {
         if (!await Configuration.validateJacamoPath()) {
             return;
         }
 
-        const workspacePath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-        const appDirectory = path.join(workspacePath, appName);
-        const appFileName = `${appName}.jcm`;
-        const fullPath = path.join(appDirectory, appFileName);
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+            vscode.window.showErrorMessage('No workspace folder is open.');
+            return;
+        }
+        const workspacePath = workspaceFolders[0].uri.fsPath;
 
-        if (!fs.existsSync(fullPath)) {
-            throw new Error(
-                `The JaCaMo application file '${appFileName}' does not exist in '${appDirectory}'.`
-            );
+        // Find all .jcm files in the root of the opened folder
+        let jcmFiles;
+        try {
+            jcmFiles = fs.readdirSync(workspacePath).filter(file => file.endsWith('.jcm'));
+        } catch (err) {
+            vscode.window.showErrorMessage('Error reading workspace directory: ' + err.message);
+            return;
+        }
+
+        if (jcmFiles.length === 0) {
+            vscode.window.showErrorMessage('No .jcm files found in the opened folder.');
+            return;
         }
 
         OutputManager.clear();
         OutputManager.show();
-        OutputManager.appendLine('🚀 Starting JaCaMo Application...');
-        OutputManager.appendLine(`📂 Running: ${appFileName} in ${appDirectory}`);
+        OutputManager.appendLine('🚀 Starting JaCaMo Application(s)...');
+        OutputManager.appendLine(`📂 Running all .jcm files in: ${workspacePath}`);
         OutputManager.appendLine('─'.repeat(50));
 
-        const process = ProcessManager.spawnProcess(
-            Configuration.jacamoPath,
-            [appFileName],
-            { cwd: appDirectory }
-        );
-
-        process.on('error', (error) => {
-            OutputManager.appendLine(`❌ Execution Error: ${error.message}`);
-            vscode.window.showErrorMessage(
-                `Error running application: ${error.message}`
+        for (const appFileName of jcmFiles) {
+            OutputManager.appendLine(`▶️ Running: ${appFileName}`);
+            const process = ProcessManager.spawnProcess(
+                Configuration.jacamoPath,
+                [appFileName],
+                { cwd: workspacePath }
             );
-        });
 
-        process.on('close', (code) => {
-            OutputManager.appendLine('─'.repeat(50));
-            if (code === 0) {
-                OutputManager.appendLine(`✅ Application '${appFileName}' completed successfully.`);
-            } else {
-                OutputManager.appendLine(`⚠️ Application '${appFileName}' exited with code ${code}.`);
-            }
-            vscode.window.showInformationMessage(
-                `JaCaMo application '${appFileName}' ${code === 0 ? 'completed successfully' : `exited with code ${code}`}.`
-            );
-        });
+            await new Promise((resolve) => {
+                process.on('error', (error) => {
+                    OutputManager.appendLine(`❌ Execution Error: ${error.message}`);
+                    vscode.window.showErrorMessage(
+                        `Error running application: ${error.message}`
+                    );
+                    resolve();
+                });
+                process.on('close', (code) => {
+                    OutputManager.appendLine('─'.repeat(50));
+                    if (code === 0) {
+                        OutputManager.appendLine(`✅ Application '${appFileName}' completed successfully.`);
+                    } else {
+                        OutputManager.appendLine(`⚠️ Application '${appFileName}' exited with code ${code}.`);
+                    }
+                    vscode.window.showInformationMessage(
+                        `JaCaMo application '${appFileName}' ${code === 0 ? 'completed successfully' : `exited with code ${code}`}.`
+                    );
+                    resolve();
+                });
+            });
+        }
     }
 }
 
@@ -215,6 +245,10 @@ class JacamoViewProvider {
         return [
             new JacamoTreeItem('Create JaCaMo App', COMMANDS.CREATE_APP),
             new JacamoTreeItem('Run JaCaMo App', COMMANDS.RUN_APP),
+            new JacamoTreeItem('Organization Dimension View', COMMANDS.ORG_DIM_VIEW),
+            new JacamoTreeItem('Agent Dimension View', COMMANDS.AGENT_DIM_VIEW),
+            new JacamoTreeItem('Environment Dimension View', COMMANDS.ENV_DIM_VIEW),
+            new JacamoTreeItem('Stop MAS Execution', COMMANDS.STOP_MAS),
         ];
     }
 }
@@ -251,15 +285,68 @@ function activate(context) {
         COMMANDS.RUN_APP,
         async () => {
             try {
-                const appName = await vscode.window.showInputBox({
-                    prompt: 'Enter the name of your JaCaMo application directory',
-                    placeHolder: 'e.g., multiagentSystem',
-                });
-
-                await JaCaMoAppManager.runApp(appName);
+                await JaCaMoAppManager.runApp();
             } catch (error) {
                 vscode.window.showErrorMessage(error.message);
             }
+        }
+    );
+
+    const orgDimViewCommand = vscode.commands.registerCommand(
+        COMMANDS.ORG_DIM_VIEW,
+        () => {
+            vscode.env.openExternal(vscode.Uri.parse('http://localhost:3271/'));
+        }
+    );
+    const agentDimViewCommand = vscode.commands.registerCommand(
+        COMMANDS.AGENT_DIM_VIEW,
+        () => {
+            vscode.env.openExternal(vscode.Uri.parse('http://localhost:3272/'));
+        }
+    );
+    const envDimViewCommand = vscode.commands.registerCommand(
+        COMMANDS.ENV_DIM_VIEW,
+        () => {
+            vscode.env.openExternal(vscode.Uri.parse('http://localhost:3273/'));
+        }
+    );
+
+    const stopMasExecution = async () => {
+        if (!await Configuration.validateJacamoPath()) {
+            return;
+        }
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        const cwd = workspaceFolders && workspaceFolders.length > 0 ? workspaceFolders[0].uri.fsPath : undefined;
+        OutputManager.clear();
+        OutputManager.show();
+        OutputManager.appendLine('🔍 Listing running MAS...');
+        try {
+            const { stdout } = await ProcessManager.executeCommand('jacamo mas list', { cwd });
+            OutputManager.appendLine(stdout);
+            // Improved regex: match MAS name before @, ignoring whitespace
+            const match = stdout.match(/^(\s*)(\S+)@/m);
+            if (!match) {
+                OutputManager.appendLine('❌ No running MAS found.');
+                vscode.window.showWarningMessage('No running MAS found.');
+                return;
+            }
+            const masName = match[2];
+            OutputManager.appendLine(`🛑 Stopping MAS: ${masName}`);
+            const stopCmd = `jacamo mas stop ${masName} --exit`;
+            const { stdout: stopOut, stderr: stopErr } = await ProcessManager.executeCommand(stopCmd, { cwd });
+            OutputManager.appendLine(stopOut);
+            if (stopErr) OutputManager.appendLine(stopErr);
+            vscode.window.showInformationMessage(`MAS '${masName}' stopped.`);
+        } catch (err) {
+            OutputManager.appendLine(`❌ Error stopping MAS: ${err.message}`);
+            vscode.window.showErrorMessage(`Error stopping MAS: ${err.message}`);
+        }
+    }
+
+    const stopMasCommand = vscode.commands.registerCommand(
+        COMMANDS.STOP_MAS,
+        async () => {
+            await stopMasExecution();
         }
     );
 
@@ -267,6 +354,10 @@ function activate(context) {
     context.subscriptions.push(
         createAppCommand,
         runAppCommand,
+        orgDimViewCommand,
+        agentDimViewCommand,
+        envDimViewCommand,
+        stopMasCommand,
         vscode.window.registerTreeDataProvider('jacamoView', jacamoViewProvider)
     );
 }

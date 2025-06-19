@@ -4,7 +4,7 @@
   "publisher": "MustafaNeto",
   "icon": "resources/jacamo-icon.png",
   "description": "An extension for JaCaMo development in VSCode.",
-  "version": "1.1.1",
+  "version": "2.1.0",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -40,6 +40,22 @@
       {
         "command": "jacamo-vscode-extension.runApp",
         "title": "Run JaCaMo Application"
+      },
+      {
+        "command": "jacamo-vscode-extension.orgDimView",
+        "title": "Organization Dimension View"
+      },
+      {
+        "command": "jacamo-vscode-extension.agentDimView",
+        "title": "Agent Dimension View"
+      },
+      {
+        "command": "jacamo-vscode-extension.envDimView",
+        "title": "Environment Dimension View"
+      },
+      {
+        "command": "jacamo-vscode-extension.stopMas",
+        "title": "Stop MAS Execution"
       }
     ],
     "viewsContainers": {
