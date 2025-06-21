@@ -48,13 +48,13 @@ Before using this extension, ensure you have:
 1. Click on the **JaCaMo Sidebar** icon in VSCode.
 2. Click **"Create JaCaMo App"**.
 3. Enter the project name.
-4. The application is created in the **current workspace**.
+4. A new JaCaMo application with a standard project structure (`src/agt`, `src/env`, `src/org`) is created in your workspace.
 
 ### **2 - Run a JaCaMo Application**
 1. Click on the **JaCaMo Sidebar** icon.
 2. Click **"Run JaCaMo App"**.
-3. All `.jcm` files in the opened folder will be executed.
-4. The JaCaMo application runs, and the output appears in **JaCaMo Output**.
+3. If multiple `.jcm` files are found in your workspace, you will be prompted to select one.
+4. The selected JaCaMo application runs, and the output appears in the **JaCaMo Output** panel.
 
 ### **3 - Stop MAS Execution**
 1. Click **"Stop MAS Execution"** in the sidebar to stop the currently running MAS.
@@ -87,9 +87,10 @@ Before using this extension, ensure you have:
 ---
 
 ## **📚 Additional Resources**
-- [JaCaMo Documentation](http://jacamo.sourceforge.net/)  
-- [JaCaMo4Code Extension](https://marketplace.visualstudio.com/items?itemName=tabajara-krausburg.jacamo4code) (For additional syntax support)  
-- [Visual Studio Code Extensions Guide](https://code.visualstudio.com/api)  
+- [JaCaMo Documentation](https://jacamo-lang.github.io/)
+- [JaCaMo Gold Miners Tutorial](https://jacamo-lang.github.io/jacamo/tutorials/gold-miners/readme.html)
+- [JaCaMo TDD Tutorial](https://jacamo-lang.github.io/jacamo/tutorials/tdd/readme.html)
+- [JaCaMo4Code Extension](https://marketplace.visualstudio.com/items?itemName=tabajara-krausburg.jacamo4code) (For additional syntax support)   
 
 ---
 
