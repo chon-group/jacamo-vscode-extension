@@ -88,7 +88,7 @@ class JaCaMoAppManager {
             OutputManager.appendLine(`ℹ️ Found running MAS: ${runningMas.join(', ')}`);
         }
         
-        OutputManager.appendLine(`📂 Running all .jcm files in: ${workspacePath}`);
+        OutputManager.appendLine(`📂 Running .jcm files in: ${workspacePath}`);
         OutputManager.appendLine('─'.repeat(50));
 
         for (const appFileName of jcmFiles) {
@@ -120,21 +120,21 @@ class JaCaMoAppManager {
             }
             
             OutputManager.appendLine(`▶️ Running: ${appFileName}`);
-            const process = ProcessManager.spawnProcess(
+            const spawnedProcess = ProcessManager.spawnProcess(
                 Configuration.jacamoPath,
                 [appFileName],
                 { cwd: workspacePath }
             );
 
             await new Promise((resolve) => {
-                process.on('error', (error) => {
+                spawnedProcess.on('error', (error) => {
                     OutputManager.appendLine(`❌ Execution Error: ${error.message}`);
                     vscode.window.showErrorMessage(
                         `Error running application: ${error.message}`
                     );
                     resolve();
                 });
-                process.on('close', (code) => {
+                spawnedProcess.on('close', (code) => {
                     OutputManager.appendLine('─'.repeat(50));
                     if (code === 0) {
                         OutputManager.appendLine(`✅ Application '${appFileName}' completed successfully.`);

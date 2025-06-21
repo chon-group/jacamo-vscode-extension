@@ -78,11 +78,10 @@ Before using this extension, ensure you have:
 - Updated Linux install instructions.
 
 ### **1.0.1**
-🚀 Initial release with:  
-✅ **JaCaMo project creation**  
-✅ **Application execution**  
-✅ **Activity Bar integration**  
-✅ **Syntax highlighting for `.jcm`, `.asl`, and `.mas2j`**  
+- JaCaMo project creation
+- Application execution
+- Activity Bar integration
+- Syntax highlighting for `.jcm`, `.asl`, and `.mas2j`
 
 ---
 
