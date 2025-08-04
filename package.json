@@ -1,7 +1,7 @@
 {
   "name": "jacamo-vscode-extension",
   "displayName": "jacamo-vscode-extension",
-  "publisher": "MustafaNeto",
+  "publisher": "ChonGroup",
   "icon": "resources/jacamo-icon.png",
   "description": "An extension for JaCaMo development in VSCode.",
   "version": "2.1.1",
@@ -18,7 +18,7 @@
   "main": "./extension.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mustafaneto/jacamo-vscode-extension"
+    "url": "https://github.com/chon-group/jacamo-vscode-extension"
   },
   "license": "MIT",
   "contributes": {

@@ -2,7 +2,7 @@
 node_modules/
 
 # VS Code extension packaging
-*.vsix
+#*.vsix
 
 # Log files
 *.log
